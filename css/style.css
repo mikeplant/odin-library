@@ -1,25 +1,89 @@
+@font-face {
+  font-family: 'Raleway';
+  src: url(../fonts/Raleway/Raleway-VariableFont_wght.ttf),
+       url(../fonts/Raleway/Raleway-Italic-VariableFont_wght.ttf);
+}
+
 * {
   box-sizing: border-box;
+  font-family: 'Raleway';
+  
+}
+
+h4,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+input,
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
 }
 
 body {
   height: 100vh;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 1fr 7fr;
+  margin: 0;
+}
+
+header {
+  display: grid;
   align-items: center;
+  background-color: #5D576B;
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 1px 9px rgb(128, 128, 128);
+  z-index: 10;
+  grid-template-columns: 1fr 9fr;
+  grid-template-rows: 1fr;
 }
 
-input {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+header h1 {
+  grid-row: 1;
+  grid-column: 1 / span 2;
+  justify-self: center;
 }
 
+.btn {
+  font-family: 'Raleway';
+  background-color: #9BC1BC;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.btn-container {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: center;
+  position: relative;
+}
+
+.add-book-menu-btn {
+  font-family: 'Raleway';
+  height: 30px;
+  width: 30px;
+  font-size: 1.6rem;
+}
 
 .form-container {
+  background-color: #9BC1BC;
   padding: 20px;
   border: 1px solid gray;
-  border-radius: 25px;
+  border-radius: 8px;
+  z-index: 11;
+  position: absolute;
+  top: 0;
+  box-shadow: 1px 1px 3px rgb(161, 160, 160);
+  /* display: none;  */
 }
 
 .add-book-form {
@@ -27,7 +91,7 @@ input {
   grid-template-columns: 75px 250px;
   gap: 12px;
   align-items: center;
-  font-size: 1.1rem;
+  font-size: 1.1rem; 
 }
 
 .add-book-form legend {
@@ -41,7 +105,7 @@ input {
 
 .add-book-form input {
   grid-column-start: 2;
-  border-radius: 25px;
+  border-radius: 8px;
   border: 1px solid gray;
   height: 100%;
   padding: 4px 10px;
@@ -50,9 +114,10 @@ input {
 #has-read {
   border: 1px solid gray;
   border-radius: 25px;
+  background-color: #fff;
   height: 20px;
   width: 20px;
-  justify-self: center;
+  justify-self: end;
 }
 
 #has-read:checked {
@@ -60,8 +125,51 @@ input {
   box-shadow: inset 0 0 0 3px #fff;
 }
 
-.add-book-submit-btn {
+.add-menu-btns {
+  display: flex;
   grid-column-start: 2;
-  width: 50%;
   justify-self: end;
+  gap: 15px;
+}
+
+.add-menu-btn {
+  border: 1px solid gray;
+  width: 75px;
+  height: 30px;
+  background-color: #F4F1BB;
+  color: #000;
+}
+
+.add-book-cancel-btn {
+  background-color: #ED6A5A;
+  color: #fff;
+}
+
+.book-display {
+  background-color: #E6EBE0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 15px;
+}
+
+.book-end {
+  padding: 20px;
+  writing-mode: vertical-rl;
+  background-color: #ED6A5A;
+  border: 1px solid rgb(121, 121, 121);
+  border-radius: 8px;
+  box-shadow: 1px 1px 3px rgb(161, 160, 160);
+}
+
+.book-end:nth-child(3n+2) {
+  background-color: #F4F1BB;
+}
+
+.book-end:nth-child(3n) {
+  background-color: #9BC1BC;
+}
+
+.book-end:hover {
+  cursor: pointer;
 }
