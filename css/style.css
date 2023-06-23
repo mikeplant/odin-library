@@ -7,7 +7,6 @@
 * {
   box-sizing: border-box;
   font-family: 'Raleway';
-  
 }
 
 h4,
@@ -56,7 +55,8 @@ header h1 {
   border-radius: 8px;
 }
 
-.btn:hover {
+.btn:hover,
+input[type='checkbox'] {
   cursor: pointer;
 }
 
@@ -74,6 +74,16 @@ header h1 {
   font-size: 1.6rem;
 }
 
+/* @keyframes fadeIn {
+  from {
+       opacity: 0;
+  }
+
+  to {
+       opacity: 1;
+  }
+} */
+
 .form-container {
   background-color: #9BC1BC;
   padding: 20px;
@@ -83,7 +93,12 @@ header h1 {
   position: absolute;
   top: 0;
   box-shadow: 1px 1px 3px rgb(161, 160, 160);
-  /* display: none;  */
+  display: none;
+}
+
+.modal-open {
+  display: block;
+  /* animation: fadeIn 1s; */
 }
 
 .add-book-form {
@@ -111,6 +126,11 @@ header h1 {
   padding: 4px 10px;
 }
 
+.add-book-form input:focus {
+  outline:none;
+  background-color:#d2d7cb;
+}
+
 #has-read {
   border: 1px solid gray;
   border-radius: 25px;
@@ -118,6 +138,10 @@ header h1 {
   height: 20px;
   width: 20px;
   justify-self: end;
+}
+
+#has-read:focus {
+  background-color:#d2d7cb;
 }
 
 #has-read:checked {
@@ -142,13 +166,14 @@ header h1 {
 
 .add-book-cancel-btn {
   background-color: #ED6A5A;
-  color: #fff;
+  color: #000;
 }
 
 .book-display {
   background-color: #E6EBE0;
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 15px;
   padding: 15px;
 }
@@ -160,6 +185,8 @@ header h1 {
   border: 1px solid rgb(121, 121, 121);
   border-radius: 8px;
   box-shadow: 1px 1px 3px rgb(161, 160, 160);
+  transition: transform ease 200ms;
+  height: 300px
 }
 
 .book-end:nth-child(3n+2) {
@@ -172,4 +199,5 @@ header h1 {
 
 .book-end:hover {
   cursor: pointer;
+  transform: translate(0, -7px);
 }
