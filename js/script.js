@@ -1,21 +1,19 @@
 let myLibrary = [];
 
-function Book(title, author, genre, pages, hasRead) {
+function Book(title, author, genre, pages, hasRead, id) {
   this.title = title
   this.author = author
   this.genre = genre
   this.pages = pages
   this.hasRead = hasRead
+  this.id = id
 }
 
 function addBookToLibrary() {
   
 }
 
-// Loop through books
-// Create elements with book info
-// display on page
-
+const bookDisplay = document.querySelector('.book-display');
 
 
 
@@ -41,38 +39,65 @@ addMenuBtn.forEach(e => {
   });
 });
 
+// Handle bookend click
+
+bookDisplay.addEventListener('click', (e) => {
+  if (e.target.classList.contains('book-display')) return;
+
+  if (e.target.type === 'button' || e.target.type === 'checkbox') { 
+    
+    return;
+  }
+
+  const bookEnd = !(e.target.classList.contains('book-end') || e.target.classList.contains('book-open')) ? e.target.parentNode : e.target;
+  const children = bookEnd.children;
+
+  bookEnd.classList.toggle('book-open');
+  if (bookEnd.classList.contains('book-open')) {
+    Array.from(children).forEach(child => child.classList.remove('hidden'));
+  } else {
+    Array.from(children).forEach(child => (child.classList.contains('hideable')) ? child.classList.add('hidden') : '');
+  }
+});
+
 //Dummy books
 
-let book = new Book('The Blade Itself','Joe Abercrombie','Fiction','515',true);
-let book2 = new Book('Before They Are Hanged','Joe Abercrombie','Fiction','441',true);
-let book3 = new Book('Last Argument of Kings','Joe Abercrombie','Fiction',true);
-let book4 = new Book('Half A King','Joe Abercrombie','Fiction','416',false);
-let book5 = new Book('Good Omens', 'Terry Pratchett & Neil Gaiman', 'Fiction', '415', true);
-let book6 = new Book('Animal Farm', 'George Orwell', 'Fiction', '122', true);
-let book7 = new Book('Reamde','Neil Stephenson', 'Fiction', '1044', true);
+let book = new Book('The Blade Itself','Joe Abercrombie','Fiction','515',true, 0);
+let book2 = new Book('Before They Are Hanged','Joe Abercrombie','Fiction','441',true, 1);
+let book3 = new Book('Last Argument of Kings','Joe Abercrombie','Fiction', '347', true, 2);
+let book4 = new Book('Half A King','Joe Abercrombie','Fiction','416',false, 3);
+let book5 = new Book('Good Omens', 'Terry Pratchett & Neil Gaiman', 'Fiction', '415', true, 4);
+let book6 = new Book('Animal Farm', 'George Orwell', 'Fiction', '122', true, 5);
+let book7 = new Book('Reamde','Neil Stephenson', 'Fiction', '1044', true, 6);
 myLibrary.push(book, book2, book3, book4, book5, book6, book7);
 
 /////////////
 
-const bookDisplay = document.querySelector('.book-display');
+
 
 myLibrary.forEach(book => {
-  
-  const bookEnd = createBookEnd(book.title, book.author);
+  const bookEnd = createBookEnd(book.title, book.author, book.genre, book.pages, book.hasRead, book.id);
   bookDisplay.appendChild(bookEnd);
 });
 
-function createBookEnd(title, author) {
+function createBookEnd(title, author, genre, pages, hasRead, id) {
   const div = document.createElement('div');
   div.classList.add('book-end');
+  div.dataset.id = id;
 
-  const titleH4 = document.createElement('h4');
-  titleH4.textContent = title;
-
-  const authorSpan = document.createElement('span');
-  authorSpan.textContent = author;
-
-  div.appendChild(titleH4);
-  div.appendChild(authorSpan);
+  div.innerHTML = 
+    `<h4>${title}</h4>
+    <span>${author}</span>
+    <span class="hidden hideable">${genre}</span>
+    <span class="hidden hideable">${pages} pages</span>
+    <label for="has-read-edit" class="hidden hideable">
+      Read?
+      <input type="checkbox" name="has-read-edit" class="has-read" ${(hasRead) ? "checked" : ""}>
+    </label>
+    <div class="book-open-btns hidden hideable">
+      <button type="button" class="btn">Remove</button>
+      <button type="button" class="btn">Close</button>
+    </div>
+  `
   return div;
 }
