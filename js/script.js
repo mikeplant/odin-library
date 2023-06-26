@@ -1,4 +1,12 @@
 let myLibrary = [];
+let bookIdNumbers = [0,1,2,3,4,5,6];
+const bookDisplay = document.querySelector('.book-display');
+const addBookBtn = document.querySelector('.add-book-menu-btn');
+const formContainer = document.querySelector('.form-container');
+const addMenuBtn = document.querySelectorAll('.add-menu-btn');
+const addBookForm = document.querySelector('.add-book-form');
+const hasReadEdit = document.querySelector('#has-read-edit');
+
 
 function Book(title, author, genre, pages, hasRead, id) {
   this.title = title
@@ -8,20 +16,6 @@ function Book(title, author, genre, pages, hasRead, id) {
   this.hasRead = hasRead
   this.id = id
 }
-
-function addBookToLibrary() {
-  
-}
-
-const bookDisplay = document.querySelector('.book-display');
-
-
-
-// Add button form handlers
-
-const addBookBtn = document.querySelector('.add-book-menu-btn');
-const formContainer = document.querySelector('.form-container');
-const addMenuBtn = document.querySelectorAll('.add-menu-btn');
 
 // Open form on add button click
 
@@ -44,12 +38,21 @@ addMenuBtn.forEach(e => {
 bookDisplay.addEventListener('click', (e) => {
   if (e.target.classList.contains('book-display')) return;
 
-  if (e.target.type === 'button' || e.target.type === 'checkbox') { 
-    if (e.target.classList.contains('remove-btn')) {
-      let parent = e.target.parentNode.parentNode;
-      let bookId = parseInt(parent.dataset.id);
-      removeBook(bookId);
+  if (e.target.type === 'button' || e.target.type === 'checkbox') {
+    let parent = e.target.parentNode.parentNode;
+    let selectedId = parseInt(parent.dataset.id);
+    if (e.target.classList.contains('remove-confirm')) {
+      removeBook(selectedId);
       parent.remove();
+    } else if (e.target.classList.contains('remove-btn')) {
+      e.target.classList.add('remove-confirm');
+      e.target.textContent = 'Confirm?';
+      setTimeout(() => {
+        e.target.classList.remove('remove-confirm');
+        e.target.textContent = 'Remove';
+      }, 5000);
+    } else if (e.target.classList.contains('has-read-edit')) {
+      changeReadStatus(selectedId);
     }
     return;
   }
@@ -66,15 +69,20 @@ bookDisplay.addEventListener('click', (e) => {
 });
 
 
-function removeBook(removeId) {
-  myLibrary = myLibrary.filter(book => book.id !== removeId);
+function removeBook(selectedId) {
+  myLibrary = myLibrary.filter(book => book.id !== selectedId);
+  updateStatusDisplay();
 }
 
+function changeReadStatus(selectedId) {
+  myLibrary.forEach(book => {
+    if (book.id !== selectedId) return;
+    book.hasRead = (book.hasRead === true) ? false : true;
+  });
+  updateStatusDisplay();
+}
 
-
-/////////////
-
-
+// Display functions
 
 function displayBooks() {
   bookDisplay.innerHTML = '';
@@ -83,6 +91,21 @@ function displayBooks() {
     bookDisplay.appendChild(bookEnd);
   });
 }
+
+function updateStatusDisplay() {
+  const totalBooks = document.querySelector('.total-books-display');
+  const readBooks = document.querySelector('.read-books-display');
+  let totalRead = myLibrary.filter(book => book.hasRead === true);
+  totalBooks.textContent = `In library: ${myLibrary.length}`;
+  readBooks.textContent = `Read: ${totalRead.length}`;
+}
+
+function updateDisplay() {
+  displayBooks();
+  updateStatusDisplay();
+}
+
+// Create elements
 
 function createBookEnd(title, author, genre, pages, hasRead, id) {
   const div = document.createElement('div');
@@ -96,7 +119,7 @@ function createBookEnd(title, author, genre, pages, hasRead, id) {
     <span class="hidden hideable">${pages} pages</span>
     <label for="has-read-edit" class="hidden hideable">
       Read?
-      <input type="checkbox" name="has-read-edit" class="has-read" ${(hasRead) ? "checked" : ""}>
+      <input type="checkbox" name="has-read-edit" class="has-read has-read-edit" ${(hasRead) ? "checked" : ""}>
     </label>
     <div class="book-open-btns hidden hideable">
       <button type="button" class="btn remove-btn">Remove</button>
@@ -106,8 +129,7 @@ function createBookEnd(title, author, genre, pages, hasRead, id) {
   return div;
 }
 
-const addBookForm = document.querySelector('.add-book-form');
-let bookIdNumbers = [0,1,2,3,4,5,6]
+// Add book listener and functions
 
 addBookForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -118,10 +140,10 @@ addBookForm.addEventListener('submit', (e) => {
     document.querySelector('#pages').value,
     document.querySelector('#has-read').checked,
     assignBookId()
-  ]
+  ];
   let book = new Book(...bookArgs);
   myLibrary.push(book);
-  displayBooks();
+  updateDisplay();
   addBookForm.reset();
 });
 
@@ -144,4 +166,8 @@ let book6 = new Book('Animal Farm', 'George Orwell', 'Fiction', '122', true, 5);
 let book7 = new Book('Reamde','Neil Stephenson', 'Fiction', '1044', true, 6);
 myLibrary.push(book, book2, book3, book4, book5, book6, book7);
 
-displayBooks();
+updateDisplay();
+
+
+
+////////////////// Add form validation, add edit book
