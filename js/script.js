@@ -125,47 +125,75 @@ addMenuBtn.forEach(e => {
   const genreInput = document.querySelector('#genre');
   const pagesInput = document.querySelector('#pages');
   const hasReadInput = document.querySelector('#has-read');
+  const requiredInputs = [titleInput, authorInput, pagesInput];
 
   e.addEventListener('click', e => {
     if (classes.contains('add-book-submit-btn')) {
       e.preventDefault();
-      if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '') {
-        (titleInput.value === '') ? titleInput.nextElementSibling.classList.add('required-show') : titleInput.nextElementSibling.classList.remove('required-show');
-        (authorInput.value === '') ? authorInput.nextElementSibling.classList.add('required-show') : authorInput.nextElementSibling.classList.remove('required-show');
-        (pagesInput.value === '') ? pagesInput.nextElementSibling.classList.add('required-show') : pagesInput.nextElementSibling.classList.remove('required-show');
+      if (!isFormValid(requiredInputs)) {
+        toggleRequiredMsgs(requiredInputs);
         return;
-        }
-      
-      createBook(titleInput.value, authorInput.value, genreInput.value, pagesInput.value, hasReadInput.checked);
-      updateDisplay();
+      }
+      let inputValues = [
+        titleInput.value, 
+        authorInput.value, 
+        genreInput.value, 
+        pagesInput.value, 
+        hasReadInput.checked
+      ];
+      handleSubmitBtnClick(inputValues);
     }
-
-    titleInput.nextElementSibling.classList.remove('required-show');
-    authorInput.nextElementSibling.classList.remove('required-show');
-    pagesInput.nextElementSibling.classList.remove('required-show');
-
+    clearForm(addBookForm, requiredInputs);
     formContainer.classList.toggle('modal-open');
-    addBookForm.reset();
   });
 });
 
+function handleSubmitBtnClick(inputValues) {
+  let newBook = createBook(...inputValues);
+  addBookToLibrary(newBook);
+  updateDisplay();
+}
+
+function clearForm(form, requiredInputs) {
+  requiredInputs.forEach(input => hideRequiredMsg(input));
+  form.reset();
+}
+
+function isFormValid(inputs) {
+  return (inputs.some(input => input.value === '')) ? false : true;
+}
+
+function toggleRequiredMsgs(inputs) {
+  inputs.forEach(input => (input.value === '') ? showRequiredMsg(input) : hideRequiredMsg(input));
+}
+
+function showRequiredMsg(input) {
+  input.nextElementSibling.classList.add('required-show');
+}
+
+function hideRequiredMsg(input) {
+  input.nextElementSibling.classList.remove('required-show');
+}
+
 function createBook(title, author, genre, pages, hasRead) {
-  let bookArgs = [
+  return new Book(
     title,
     author,
     genre,
     pages,
     hasRead,
     assignBookId()
-  ];
-  let book = new Book(...bookArgs);
-  myLibrary.push(book);
+  );
 }
 
 function assignBookId() {
   let newId = parseInt(bookIdNumbers.slice(-1)) + 1;
   bookIdNumbers.push(newId);
   return newId;
+}
+
+function addBookToLibrary(book) {
+  myLibrary.push(book);
 }
 
 
