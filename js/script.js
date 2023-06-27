@@ -21,22 +21,12 @@ function Book(title, author, genre, pages, hasRead, id) {
 
 addBookBtn.addEventListener('click', () => formContainer.classList.toggle('modal-open'));
 
-// Handle add form 
-
-addMenuBtn.forEach(e => {
-  let classes = e.classList;
-  e.addEventListener('click', e => {
-    if (classes.contains('add-book-submit-btn')) {
-    //code...
-    }
-    formContainer.classList.toggle('modal-open');
-  });
-});
-
 // Handle bookend click
 
 bookDisplay.addEventListener('click', (e) => {
   if (e.target.classList.contains('book-display')) return;
+
+  console.log(e.target)
 
   if (e.target.type === 'button' || e.target.type === 'checkbox') {
     let parent = e.target.parentNode.parentNode;
@@ -57,6 +47,8 @@ bookDisplay.addEventListener('click', (e) => {
     return;
   }
 
+  if (e.target.classList.contains('cbox-label')) return;
+
   const bookEnd = !(e.target.classList.contains('book-end') || e.target.classList.contains('book-open')) ? e.target.parentNode : e.target;
   const children = Array.from(bookEnd.children);
 
@@ -67,7 +59,6 @@ bookDisplay.addEventListener('click', (e) => {
     children.forEach(child => (child.classList.contains('hideable')) ? child.classList.add('hidden') : '');
   }
 });
-
 
 function removeBook(selectedId) {
   myLibrary = myLibrary.filter(book => book.id !== selectedId);
@@ -117,13 +108,12 @@ function createBookEnd(title, author, genre, pages, hasRead, id) {
     <span>${author}</span>
     <span class="hidden hideable">${genre}</span>
     <span class="hidden hideable">${pages} pages</span>
-    <label for="has-read-edit" class="hidden hideable">
+    <label class="cbox-label hidden hideable">
       Read?
       <input type="checkbox" name="has-read-edit" class="has-read has-read-edit" ${(hasRead) ? "checked" : ""}>
     </label>
     <div class="book-open-btns hidden hideable">
       <button type="button" class="btn remove-btn">Remove</button>
-      <button type="button" class="btn">Close</button>
     </div>
   `
   return div;
@@ -131,21 +121,49 @@ function createBookEnd(title, author, genre, pages, hasRead, id) {
 
 // Add book listener and functions
 
-addBookForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+addMenuBtn.forEach(e => {
+  let classes = e.classList;
+  const titleInput = document.querySelector('#title');
+  const authorInput = document.querySelector('#author');
+  const genreInput = document.querySelector('#genre');
+  const pagesInput = document.querySelector('#pages');
+  const hasReadInput = document.querySelector('#has-read');
+
+  e.addEventListener('click', e => {
+    if (classes.contains('add-book-submit-btn')) {
+      e.preventDefault();
+      if (titleInput.value === '' || authorInput.value === '' || pagesInput.value === '') {
+        (titleInput.value === '') ? titleInput.nextElementSibling.classList.add('required-show') : titleInput.nextElementSibling.classList.remove('required-show');
+        (authorInput.value === '') ? authorInput.nextElementSibling.classList.add('required-show') : authorInput.nextElementSibling.classList.remove('required-show');
+        (pagesInput.value === '') ? pagesInput.nextElementSibling.classList.add('required-show') : pagesInput.nextElementSibling.classList.remove('required-show');
+        return;
+        }
+      
+      createBook(titleInput.value, authorInput.value, genreInput.value, pagesInput.value, hasReadInput.checked);
+      updateDisplay();
+    }
+
+    titleInput.nextElementSibling.classList.remove('required-show');
+    authorInput.nextElementSibling.classList.remove('required-show');
+    pagesInput.nextElementSibling.classList.remove('required-show');
+
+    formContainer.classList.toggle('modal-open');
+    addBookForm.reset();
+  });
+});
+
+function createBook(title, author, genre, pages, hasRead) {
   let bookArgs = [
-    document.querySelector('#title').value,
-    document.querySelector('#author').value,
-    document.querySelector('#genre').value,
-    document.querySelector('#pages').value,
-    document.querySelector('#has-read').checked,
+    title,
+    author,
+    genre,
+    pages,
+    hasRead,
     assignBookId()
   ];
   let book = new Book(...bookArgs);
   myLibrary.push(book);
-  updateDisplay();
-  addBookForm.reset();
-});
+}
 
 function assignBookId() {
   let newId = parseInt(bookIdNumbers.slice(-1)) + 1;
@@ -167,7 +185,3 @@ let book7 = new Book('Reamde','Neil Stephenson', 'Fiction', '1044', true, 6);
 myLibrary.push(book, book2, book3, book4, book5, book6, book7);
 
 updateDisplay();
-
-
-
-////////////////// Add form validation, add edit book
