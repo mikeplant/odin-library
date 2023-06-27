@@ -25,9 +25,6 @@ addBookBtn.addEventListener('click', () => formContainer.classList.toggle('modal
 
 bookDisplay.addEventListener('click', (e) => {
   if (e.target.classList.contains('book-display')) return;
-
-  console.log(e.target)
-
   if (e.target.type === 'button' || e.target.type === 'checkbox') {
     let parent = e.target.parentNode.parentNode;
     let selectedId = parseInt(parent.dataset.id);
