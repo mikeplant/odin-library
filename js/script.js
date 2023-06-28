@@ -181,11 +181,11 @@ function clearForm(form, requiredInputs) {
 }
 
 function isFormValid(inputs) {
-  return (inputs.some(input => input.value === '')) ? false : true;
+  return (inputs.some(input => isWhitespace(input.value))) ? false : true;
 }
 
 function toggleRequiredMsgs(inputs) {
-  inputs.forEach(input => (input.value === '') ? showRequiredMsg(input) : hideRequiredMsg(input));
+  inputs.forEach(input => (isWhitespace(input.value)) ? showRequiredMsg(input) : hideRequiredMsg(input));
 }
 
 function showRequiredMsg(input) {
@@ -246,6 +246,11 @@ function getTotalBooksRead() {
   return myLibrary.filter(book => book.hasRead === true).length;
 }
 
+// Misc Functions
+
+function isWhitespace(str) {
+  return (!str || !str.trim());
+}
 
 //Dummy books
 
