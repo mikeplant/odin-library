@@ -17,75 +17,92 @@ function Book(title, author, genre, pages, hasRead, id) {
   this.id = id
 }
 
-// Open form on add button click
-
-addBookBtn.addEventListener('click', () => formContainer.classList.toggle('modal-open'));
-
-// Handle bookend click
+// Handle book card click
 
 bookDisplay.addEventListener('click', (e) => {
-  if (e.target.classList.contains('book-display')) return;
-  if (e.target.type === 'button' || e.target.type === 'checkbox') {
-    let parent = e.target.parentNode.parentNode;
-    let selectedId = parseInt(parent.dataset.id);
-    if (e.target.classList.contains('remove-confirm')) {
-      removeBook(selectedId);
-      parent.remove();
-    } else if (e.target.classList.contains('remove-btn')) {
-      e.target.classList.add('remove-confirm');
-      e.target.textContent = 'Confirm?';
-      setTimeout(() => {
-        e.target.classList.remove('remove-confirm');
-        e.target.textContent = 'Remove';
-      }, 5000);
-    } else if (e.target.classList.contains('has-read-edit')) {
-      changeReadStatus(selectedId);
-    }
+  let clickedElement = e.target;
+  let selected = () => {
+    return (clickedElement.classList.contains('book-display')) ? 'book-display' :
+      (clickedElement.classList.contains('remove-confirm')) ? 'remove-confirm' :
+      (clickedElement.classList.contains('remove-btn')) ? 'remove-btn' :
+      (clickedElement.classList.contains('has-read-edit')) ? 'has-read-edit' :
+      (clickedElement.classList.contains('cbox-label')) ? 'cbox-label' :
+      (clickedElement.classList.contains('book-end')) ? 'book-end' :
+      (clickedElement.classList.contains('book-open')) ? 'book-open' :
+      '';
+  };
+
+  if (selected() === 'book-display') return;
+  if (clickedElement.type === 'button' || clickedElement.type === 'checkbox') {
+    handleInputClick(clickedElement, selected());
     return;
   }
+  if (selected() === 'cbox-label') return;
+  toggleBookModal(selected(), clickedElement);
+});
 
-  if (e.target.classList.contains('cbox-label')) return;
+function handleInputClick(clickedElement, selected) {
+  let parent = clickedElement.parentNode.parentNode;
+  let selectedId = parseInt(parent.dataset.id);
+  if (selected === 'remove-confirm') {
+    removeBook(selectedId);
+    parent.remove();
+  } else if (selected === 'remove-btn') {
+    showRemoveConfirmBtn(clickedElement);
+  } else if (selected === 'has-read-edit') {
+    changeReadStatus(selectedId);
+  }
+}
 
-  const bookEnd = !(e.target.classList.contains('book-end') || e.target.classList.contains('book-open')) ? e.target.parentNode : e.target;
+// Book card display functions
+
+function toggleBookModal(selected, clickedElement) {
+  const bookEnd = !(selected === 'book-end' || selected === 'book-open') ? clickedElement.parentNode : clickedElement;
   const children = Array.from(bookEnd.children);
+  toggleBookOpen(bookEnd);
+  toggleBookDetailsDisplay(bookEnd, children);
+}
 
+function toggleBookOpen(bookEnd) {
   bookEnd.classList.toggle('book-open');
+}
+
+function showRemoveConfirmBtn(btn) {
+  btn.classList.add('remove-confirm');
+  btn.textContent = 'Confirm?';
+  setTimeout(() => {
+    btn.classList.remove('remove-confirm');
+    btn.textContent = 'Remove';
+  }, 5000);
+}
+
+function toggleBookDetailsDisplay(bookEnd, children) {
   if (bookEnd.classList.contains('book-open')) {
     children.forEach(child => child.classList.remove('hidden'));
   } else {
     children.forEach(child => (child.classList.contains('hideable')) ? child.classList.add('hidden') : '');
   }
-});
-
-function removeBook(selectedId) {
-  myLibrary = myLibrary.filter(book => book.id !== selectedId);
-  updateStatusDisplay();
 }
 
-function changeReadStatus(selectedId) {
-  myLibrary.forEach(book => {
-    if (book.id !== selectedId) return;
-    book.hasRead = (book.hasRead === true) ? false : true;
-  });
-  updateStatusDisplay();
-}
-
-// Display functions
+// Main display functions
 
 function displayBooks() {
-  bookDisplay.innerHTML = '';
+  clearBookDisplay()
   myLibrary.forEach(book => {
     const bookEnd = createBookEnd(book.title, book.author, book.genre, book.pages, book.hasRead, book.id);
     bookDisplay.appendChild(bookEnd);
   });
 }
 
+function clearBookDisplay() {
+  bookDisplay.innerHTML = '';
+}
+
 function updateStatusDisplay() {
   const totalBooks = document.querySelector('.total-books-display');
   const readBooks = document.querySelector('.read-books-display');
-  let totalRead = myLibrary.filter(book => book.hasRead === true);
-  totalBooks.textContent = `In library: ${myLibrary.length}`;
-  readBooks.textContent = `Read: ${totalRead.length}`;
+  totalBooks.textContent = `In library: ${getTotalBooks()}`;
+  readBooks.textContent = `Read: ${getTotalBooksRead()}`;
 }
 
 function updateDisplay() {
@@ -93,7 +110,7 @@ function updateDisplay() {
   updateStatusDisplay();
 }
 
-// Create elements
+// Create element functions
 
 function createBookEnd(title, author, genre, pages, hasRead, id) {
   const div = document.createElement('div');
@@ -116,7 +133,9 @@ function createBookEnd(title, author, genre, pages, hasRead, id) {
   return div;
 }
 
-// Add book listener and functions
+// Handle Add Book form click
+
+addBookBtn.addEventListener('click', () => toggleFormVisibility());
 
 addMenuBtn.forEach(e => {
   let classes = e.classList;
@@ -144,7 +163,7 @@ addMenuBtn.forEach(e => {
       handleSubmitBtnClick(inputValues);
     }
     clearForm(addBookForm, requiredInputs);
-    formContainer.classList.toggle('modal-open');
+    toggleFormVisibility();
   });
 });
 
@@ -153,6 +172,8 @@ function handleSubmitBtnClick(inputValues) {
   addBookToLibrary(newBook);
   updateDisplay();
 }
+
+// Add book form functions
 
 function clearForm(form, requiredInputs) {
   requiredInputs.forEach(input => hideRequiredMsg(input));
@@ -175,6 +196,12 @@ function hideRequiredMsg(input) {
   input.nextElementSibling.classList.remove('required-show');
 }
 
+function toggleFormVisibility() {
+  formContainer.classList.toggle('modal-open');
+}
+
+// Book functions
+
 function createBook(title, author, genre, pages, hasRead) {
   return new Book(
     title,
@@ -192,10 +219,32 @@ function assignBookId() {
   return newId;
 }
 
+function removeBook(selectedId) {
+  myLibrary = myLibrary.filter(book => book.id !== selectedId);
+  updateStatusDisplay();
+}
+
+function changeReadStatus(selectedId) {
+  myLibrary.forEach(book => {
+    if (book.id !== selectedId) return;
+    book.hasRead = (book.hasRead === true) ? false : true;
+  });
+  updateStatusDisplay();
+}
+
+// Library functions
+
 function addBookToLibrary(book) {
   myLibrary.push(book);
 }
 
+function getTotalBooks() {
+  return myLibrary.length;
+}
+
+function getTotalBooksRead() {
+  return myLibrary.filter(book => book.hasRead === true).length;
+}
 
 
 //Dummy books
