@@ -250,12 +250,24 @@ function getTotalBooksRead() {
   return myLibrary.filter(book => book.hasRead === true).length;
 }
 
+// Sort functions
+
+let currentSort;
+
 function sortLibrary(property) {
-  myLibrary.sort((a, b) => a[property].localeCompare(b[property]));
-  updateDisplay();
+  currentSort = property;
+  // updateDisplay(); //
 }
 
-// Misc Functions
+function sortByString(property) {
+  myLibrary.sort((a, b) => a[property].localeCompare(b[property]));
+}
+
+function sortByNumber(property) {
+  myLibrary.sort((a, b) => parseInt(a[property]) - parseInt(b[property]));
+}
+
+// Misc functions
 
 function isWhitespace(str) {
   return (!str || !str.trim());
@@ -264,12 +276,12 @@ function isWhitespace(str) {
 //Dummy books
 
 let book = new Book('The Blade Itself','Joe Abercrombie','Fiction','515',true, 0);
-let book2 = new Book('Before They Are Hanged','Joe Abercrombie','Fiction','441',true, 1);
+let book2 = new Book('Before They Are Hanged','Joe Abercrombie','Fantasy','441',true, 1);
 let book3 = new Book('Last Argument of Kings','Joe Abercrombie','Fiction', '347', true, 2);
 let book4 = new Book('Half A King','Joe Abercrombie','Fiction','416',false, 3);
 let book5 = new Book('Good Omens', 'Terry Pratchett & Neil Gaiman', 'Fiction', '415', true, 4);
-let book6 = new Book('Animal Farm', 'George Orwell', 'Fiction', '122', true, 5);
-let book7 = new Book('Reamde','Neil Stephenson', 'Fiction', '1044', true, 6);
+let book6 = new Book('Animal Farm', 'George Orwell', 'Classics', '122', true, 5);
+let book7 = new Book('Reamde','Neil Stephenson', 'SciFi', '1044', true, 6);
 myLibrary.push(book, book2, book3, book4, book5, book6, book7);
 
 updateDisplay();
