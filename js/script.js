@@ -149,7 +149,7 @@ addMenuBtn.forEach(e => {
   e.addEventListener('click', e => {
     if (classes.contains('add-book-submit-btn')) {
       e.preventDefault();
-      if (!isFormValid(requiredInputs)) {
+      if (!isValidForm(requiredInputs)) {
         toggleRequiredMsgs(requiredInputs);
         return;
       }
@@ -180,12 +180,16 @@ function clearForm(form, requiredInputs) {
   form.reset();
 }
 
-function isFormValid(inputs) {
-  return (inputs.some(input => isWhitespace(input.value))) ? false : true;
+function isValidInput(input) {
+  return ((isWhitespace(input.value)) || (input.type === 'number' && input.value <= 0));
+}
+
+function isValidForm(inputs) {
+  return (inputs.some(input => isValidInput(input))) ? false : true;
 }
 
 function toggleRequiredMsgs(inputs) {
-  inputs.forEach(input => (isWhitespace(input.value)) ? showRequiredMsg(input) : hideRequiredMsg(input));
+  inputs.forEach(input => (isValidInput(input)) ? showRequiredMsg(input) : hideRequiredMsg(input));
 }
 
 function showRequiredMsg(input) {
@@ -244,6 +248,11 @@ function getTotalBooks() {
 
 function getTotalBooksRead() {
   return myLibrary.filter(book => book.hasRead === true).length;
+}
+
+function sortLibrary(property) {
+  myLibrary.sort((a, b) => a[property].localeCompare(b[property]));
+  updateDisplay();
 }
 
 // Misc Functions
