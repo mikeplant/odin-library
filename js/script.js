@@ -263,8 +263,9 @@ dropBtn.addEventListener('click', e => {
 });
 
 sortSelectBtns.forEach(btn => btn.addEventListener('click', e => {
-  currentSort = e.target.id.split('-')[0];
-  sortLibrary(currentSort);
+  let sortBy = e.target.id.split('-')[0];
+  (sortBy === currentSort) ? reverseLibrarySort() : sortLibrary(sortBy);
+  currentSort = sortBy;
   updateDisplay();
 }));
 
@@ -276,8 +277,12 @@ function toggleDropBtnBorder() {
   dropBtn.classList.toggle('drop-menu-open');
 }
 
-function sortLibrary() {
-  (currentSort === 'pages') ? sortByNumber(currentSort) : sortByString(currentSort);
+function reverseLibrarySort() {
+  myLibrary.reverse();
+}
+
+function sortLibrary(sortBy) {
+  (sortBy === 'pages' || sortBy === 'id') ? sortByNumber(sortBy) : sortByString(sortBy);
 }
 
 function sortByString(property) {
