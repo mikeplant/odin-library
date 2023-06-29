@@ -99,10 +99,12 @@ function clearBookDisplay() {
 }
 
 function updateStatusDisplay() {
-  const totalBooks = document.querySelector('.total-books-display');
-  const readBooks = document.querySelector('.read-books-display');
-  totalBooks.textContent = `In library: ${getTotalBooks()}`;
-  readBooks.textContent = `Read: ${getTotalBooksRead()}`;
+  const totalBooks = document.querySelector('.current-total');
+  const readBooks = document.querySelector('.read-total');
+  const unreadBooks = document.querySelector('.unread-total');
+  totalBooks.textContent = `${getTotalBooks()}`;
+  readBooks.textContent = `${getTotalBooksRead()}`;
+  unreadBooks.textContent = `${getTotalBooksUnread()}`;
 }
 
 function updateDisplay() {
@@ -250,9 +252,13 @@ function getTotalBooksRead() {
   return myLibrary.filter(book => book.hasRead === true).length;
 }
 
+function getTotalBooksUnread() {
+  return myLibrary.filter(book => book.hasRead === false).length;
+}
+
 // Sort functions
 
-let currentSort;
+let currentSort = 'id';
 const dropBtn = document.querySelector('.drop-btn');
 const sortMenu = document.querySelector('.sort-menu');
 const sortSelectBtns = Array.from(document.querySelectorAll('.sort-select'));
@@ -264,10 +270,14 @@ dropBtn.addEventListener('click', e => {
 
 sortSelectBtns.forEach(btn => btn.addEventListener('click', e => {
   let sortBy = e.target.id.split('-')[0];
-  (sortBy === currentSort) ? reverseLibrarySort() : sortLibrary(sortBy);
-  currentSort = sortBy;
+  handleSortBtnClick(sortBy);
   updateDisplay();
+  currentSort = sortBy;
 }));
+
+function handleSortBtnClick(sortBy) {
+  (sortBy === currentSort) ? reverseLibrarySort() : sortLibrary(sortBy);
+}
 
 function toggleSortMenuShow() {
   sortMenu.classList.toggle('sort-menu-show');
