@@ -253,10 +253,31 @@ function getTotalBooksRead() {
 // Sort functions
 
 let currentSort;
+const dropBtn = document.querySelector('.drop-btn');
+const sortMenu = document.querySelector('.sort-menu');
+const sortSelectBtns = Array.from(document.querySelectorAll('.sort-select'));
 
-function sortLibrary(property) {
-  currentSort = property;
-  // updateDisplay(); //
+dropBtn.addEventListener('click', e => {
+  toggleSortMenuShow();
+  toggleDropBtnBorder();
+});
+
+sortSelectBtns.forEach(btn => btn.addEventListener('click', e => {
+  currentSort = e.target.id.split('-')[0];
+  sortLibrary(currentSort);
+  updateDisplay();
+}));
+
+function toggleSortMenuShow() {
+  sortMenu.classList.toggle('sort-menu-show');
+}
+
+function toggleDropBtnBorder() {
+  dropBtn.classList.toggle('drop-menu-open');
+}
+
+function sortLibrary() {
+  (currentSort === 'pages') ? sortByNumber(currentSort) : sortByString(currentSort);
 }
 
 function sortByString(property) {

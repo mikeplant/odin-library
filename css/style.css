@@ -63,6 +63,7 @@ header h1 {
 }
 
 .btn:hover,
+.sort-btns:hover,
 input[type='checkbox'] {
   cursor: pointer;
 }
@@ -172,29 +173,46 @@ input[type='checkbox'] {
   justify-self: end;
 }
 
-.drop-btn {
-  padding: 3px 12px;
+.sort-menu-container {
+  position: relative;
+  display: flex;
 }
 
 .sort-menu {
-  position: relative;
+  display: flex;
+  position: absolute;
+  left: -490px;
+  z-index: 8;
+  transition: left linear 300ms;
 }
 
-.sort-select {
-  position: absolute;
-  /* background-color: #9BC1BC; */
-  display: flex;
-  /* display: none; */
+.sort-menu-show {
+  left: 120px;
+  transition: left linear 300ms;
+}
+
+.sort-menu button:last-child {
+  border-bottom-right-radius: 6px;
 }
 
 .sort-btns {
   width: 120px;
-  height: 30px;
-  padding: 4px;
-  /* margin-top: 6px; */
+  height: 25px;
   border: 1px solid #5D576B;
-  /* border-radius: 0; */
   font-size: 0.9rem;
+  background-color: #f6fbef;
+  box-shadow: 1px 1px 3px rgb(161, 160, 160);
+}
+
+.drop-btn {
+  z-index: 9;
+  border-bottom-right-radius: 6px;
+  transition: border-bottom-right-radius linear 400ms;
+}
+
+.drop-menu-open {
+  border-bottom-right-radius: 0;
+  transition: border-bottom-right-radius linear 400ms;
 }
 
 .has-read, #has-read {
@@ -235,8 +253,13 @@ input[type='checkbox'] {
   color: #000;
 }
 
-.book-display {
+.content {
+  height: 100%;
   background-color: #E6EBE0;
+}
+
+.book-display {
+  
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;

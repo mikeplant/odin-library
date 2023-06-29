@@ -36,15 +36,6 @@
           </div>
         </form>
       </div>
-      <div class="sort-menu">
-        <button class="drop-btn btn">Sort</button>
-        <div class="sort-select">
-          <button class="sort-btns btn">Title</button>
-          <button class="sort-btns btn">Author</button>
-          <button class="sort-btns btn">Genre</button>
-          <button class="sort-btns btn">Pages</button>
-        </div>
-      </div>
     </div>
     <h1>My Library</h1>
     <div class="status-display">
@@ -53,7 +44,18 @@
     </div>
   </header>
 
-  <div class="book-display">
+  <div class="content">
+    <div class="sort-menu-container">
+      <button class="drop-btn sort-btns">Sort by...</button>
+      <div class="sort-menu">
+        <button class="sort-btns sort-select" id="title-sort">Title</button>
+        <button class="sort-btns sort-select" id="author-sort">Author</button>
+        <button class="sort-btns sort-select" id="genre-sort">Genre</button>
+        <button class="sort-btns sort-select" id="pages-sort">Pages</button>
+      </div>
+    </div>
+    <div class="book-display">
+    </div>
   </div>
 </body>
 </html>
