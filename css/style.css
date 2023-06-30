@@ -9,6 +9,19 @@
   src: url(../fonts/Ms_Madi/MsMadi-Regular.ttf);
 }
 
+:root {
+  --btn-color-one: #9BC1BC;
+  --btn-color-two: #ED6A5A;
+  --menu-color: #f6fbef;
+  --bookend-color-one: #ED6A5A;
+  --bookend-color-two: #F4F1BB;
+  --bookend-color-three: #9BC1BC;
+  --main-color-one: #5D576B;
+  --main-color-two: #E6EBE0;
+  --text-color-one: #fff;
+  --text-color-two: #000;
+}
+
 * {
   box-sizing: border-box;
   font-family: 'Raleway';
@@ -39,8 +52,8 @@ body {
 header {
   display: grid;
   align-items: center;
-  background-color: #5D576B;
-  color: #fff;
+  background-color: var(--main-color-one);
+  color: var(--text-color-one);
   width: 100%;
   box-shadow: 0 1px 9px rgb(128, 128, 128);
   z-index: 10;
@@ -53,13 +66,13 @@ header h1 {
   grid-column: 1 / span 3;
   justify-self: center;
   font-family: 'Ms Madi';
-  font-size: 2.6em;
+  font-size: 3em;
 }
 
 .btn {
   font-family: 'Raleway';
-  background-color: #9BC1BC;
-  color: #fff;
+  background-color: var(--btn-color-one);
+  color: var(--text-color-one);
   border-radius: 8px;
 }
 
@@ -89,8 +102,8 @@ input[type='checkbox'] {
 }
 
 .form-container {
-  background-color: #f6fbef;
-  color: #5D576B;
+  background-color: var(--menu-color);
+  color: var(--text-color-two);
   padding: 12px;
   border: 1px solid gray;
   border-radius: 8px;
@@ -167,10 +180,10 @@ input[type='checkbox'] {
 .sort-btns {
   width: 120px;
   height: 25px;
-  border: 1px solid #5D576B;
+  border: 1px solid var(--main-color-one);
   border-top: none;
   font-size: 0.9rem;
-  background-color: #f6fbef;
+  background-color: var(--menu-color);
   box-shadow: 1px 1px 3px rgb(161, 160, 160);
 }
 
@@ -185,13 +198,11 @@ input[type='checkbox'] {
   border: 1px solid gray;
   width: 75px;
   height: 30px;
-  /* background-color: #F4F1BB; */
-  color: #fff;
+  color: var(--text-color-one);
 }
 
 .add-book-cancel-btn {
-  background-color: #ED6A5A;
-  /* color: #000; */
+  background-color: var(--btn-color-two);
 }
 
 .status-display {
@@ -220,7 +231,7 @@ input[type='checkbox'] {
 }
 
 .has-read:checked, #has-read:checked {
-  background-color: #9BC1BC;
+  background-color: var(--btn-color-one);
   box-shadow: inset 0 0 0 3px #fff;
 }
 
@@ -292,6 +303,8 @@ input[type='checkbox'] {
 .divider-line {
   grid-column: span 2;
   border-top: 1px solid #c5c5c5;
+  justify-self: center;
+  width: 90%;
 }
 
 .sort-menu-container {
@@ -329,7 +342,7 @@ input[type='checkbox'] {
 .drop-btn {
   z-index: 9;
   border-bottom-right-radius: 6px;
-  transition: border-bottom-right-radius linear 300ms;
+  transition: border-bottom-right-radius linear 100ms;
   box-shadow: 1px 1px 3px rgb(161, 160, 160);
 }
 
@@ -340,7 +353,7 @@ input[type='checkbox'] {
 
 .content {
   height: 100%;
-  background-color: #E6EBE0;
+  background-color: var(--main-color-two);
 }
 
 .book-display {
@@ -354,7 +367,8 @@ input[type='checkbox'] {
 .book-end {
   padding: 20px;
   writing-mode: vertical-rl;
-  background-color: #ED6A5A;
+  color: var(--text-color-two);
+  background-color: var(--bookend-color-one);
   border: 1px solid rgb(121, 121, 121);
   border-radius: 8px;
   box-shadow: 1px 1px 3px rgb(161, 160, 160);
@@ -364,11 +378,11 @@ input[type='checkbox'] {
 }
 
 .book-end:nth-child(3n+2) {
-  background-color: #F4F1BB;
+  background-color: var(--bookend-color-two);
 }
 
 .book-end:nth-child(3n) {
-  background-color: #9BC1BC;
+  background-color: var(--bookend-color-three);
 }
 
 .book-end:hover {
@@ -411,7 +425,7 @@ input[type='checkbox'] {
 }
 
 .book-open-btns button {
-  width: 150px;
+  width: 100px;
   height: 35px;
 }
 
@@ -420,8 +434,44 @@ input[type='checkbox'] {
 }
 
 .remove-confirm {
-  background-color: #ED6A5A;
+  background-color: var(--btn-color-two);
   transition: background-color linear 400ms;
+}
+
+.book-edit-form {
+  display: grid;
+  gap: 2px;
+  height: 100%;
+  font-size: 0.8rem;
+}
+
+.book-edit-form legend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.book-edit-form label {
+  align-self: end;
+  padding: 0;
+  font-weight: 600;
+}
+
+.book-edit-form input {
+  border: 1px solid #000;
+  border-radius: 8px;
+  align-self: start;
+  height: 100%;
+  padding: 0 6px;
+}
+
+.edit-btn-container {
+  align-items: end;
+  padding-top: 10px;
+}
+
+.edit-btn-container button {
+  height: 30px;
 }
 
 .hidden {

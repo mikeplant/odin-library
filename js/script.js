@@ -25,6 +25,8 @@ bookDisplay.addEventListener('click', (e) => {
     return (clickedElement.classList.contains('book-display')) ? 'book-display' :
       (clickedElement.classList.contains('remove-confirm')) ? 'remove-confirm' :
       (clickedElement.classList.contains('remove-btn')) ? 'remove-btn' :
+      (clickedElement.classList.contains('edit-btn')) ? 'edit-btn' :
+      (clickedElement.classList.contains('confirm-edit-btn')) ? 'confirm-edit-btn' :
       (clickedElement.classList.contains('has-read-edit')) ? 'has-read-edit' :
       (clickedElement.classList.contains('cbox-label')) ? 'cbox-label' :
       (clickedElement.classList.contains('book-end')) ? 'book-end' :
@@ -32,8 +34,9 @@ bookDisplay.addEventListener('click', (e) => {
       '';
   };
 
+
   if (selected() === 'book-display') return;
-  if (clickedElement.type === 'button' || clickedElement.type === 'checkbox') {
+  if (clickedElement.type === 'button' || clickedElement.type === 'checkbox' || clickedElement.type === 'text') {
     handleInputClick(clickedElement, selected());
     return;
   }
@@ -47,6 +50,14 @@ function handleInputClick(clickedElement, selected) {
   if (selected === 'remove-confirm') {
     removeBook(selectedId);
     parent.remove();
+  } else if (selected === 'confirm-edit-btn') {
+    selectedId = parseInt(parent.parentNode.dataset.id);
+    updateBookDetails(selectedId);
+    updateBookDisplay(selectedId, parent.parentNode);
+  } else if (selected === 'edit-btn') {
+    parent.classList.add('editing');
+    parent.innerHTML = '';
+    showBookEditForm(selectedId, parent);
   } else if (selected === 'remove-btn') {
     showRemoveConfirmBtn(clickedElement);
   } else if (selected === 'has-read-edit') {
@@ -54,11 +65,96 @@ function handleInputClick(clickedElement, selected) {
   }
 }
 
+function updateBookDisplay(id, parent) {
+  const updatedBookEnd = createBookEnd(...Object.values(getBookById(id)));
+  updatedBookEnd.classList.add('book-open');
+  Array.from(updatedBookEnd.children).forEach(child => child.classList.remove('hidden'));
+  bookDisplay.replaceChild(updatedBookEnd, parent);
+}
+
+function getEditFormValues(id) {
+  const title = document.querySelector(`#title-edit-${id}`);
+  const author = document.querySelector(`#author-edit-${id}`);
+  const genre = document.querySelector(`#genre-edit-${id}`);
+  const pages = document.querySelector(`#pages-edit-${id}`);
+
+  const updatedDetails = {
+    title: title.value,
+    author: author.value,
+    genre: genre.value,
+    pages: pages.value
+  }
+
+  return updatedDetails;
+}
+
+function updateBookDetails(id) {
+  const book = getBookById(id);
+  const updatedBook = getEditFormValues(id);
+  book.title = updatedBook.title;
+  book.author = updatedBook.author;
+  book.genre = updatedBook.genre;
+  book.pages = updatedBook.pages;
+}
+
+function getBookById(id) {
+  return myLibrary.find(book => book.id === id);
+}
+
+function showBookEditForm(selectedId, parent) {
+  const book = getBookById(selectedId);
+  const form = createEditForm(book);
+  parent.appendChild(form);
+}
+
+function createEditForm(book) {
+  const form = createDOMElement('form', {
+    'class': ['book-edit-form']
+  });
+  const legend = createDOMElement('legend', {
+    'textContent': 'Edit Book'
+  });
+  const btnContainer = createDOMElement('div', {
+    'class': ['edit-btn-container', 'book-open-btns']
+  });
+  const cancelBtn = createDOMElement('button', {
+    'class': ['cancel-edit-btn', 'btn'],
+    'type': 'button',
+    'textContent': 'Cancel'
+  });
+  const confirmBtn = createDOMElement('button', {
+    'class': ['confirm-edit-btn', 'btn'],
+    'type': 'button',
+    'textContent': 'Confirm'
+  });
+  form.appendChild(legend);
+  btnContainer.append(cancelBtn, confirmBtn);
+
+  for (const key in book) {
+    if (key !== 'hasRead' && key !== 'id') {
+      const label = createDOMElement('label', {
+        'for': `${key}-edit-${book.id}`,
+        'textContent': `${key.charAt(0).toUpperCase() + key.slice(1)}`
+      });
+      const input = createDOMElement('input', {
+        'type': 'text',
+        'name': `${key}-edit-${book.id}`,
+        'id': `${key}-edit-${book.id}`,
+        'value': `${book[key]}`
+      });
+      form.append(label, input);
+    }
+  }
+  form.appendChild(btnContainer)
+  return form;
+}
+
 // Book card display functions
 
 function toggleBookModal(selected, clickedElement) {
   const bookEnd = !(selected === 'book-end' || selected === 'book-open') ? clickedElement.parentNode : clickedElement;
   const children = Array.from(bookEnd.children);
+  if (bookEnd.classList.contains('book-edit-form') || bookEnd.classList.contains('editing')) return;
   toggleBookOpen(bookEnd);
   toggleBookDetailsDisplay(bookEnd, children);
 }
@@ -115,24 +211,79 @@ function updateDisplay() {
 // Create element functions
 
 function createBookEnd(title, author, genre, pages, hasRead, id) {
-  const div = document.createElement('div');
-  div.classList.add('book-end');
-  div.dataset.id = id;
+  const div = createDOMElement('div', {
+    'class': ["book-end"], 
+    'data-id': id
+  });
+  const checkbox = createDOMElement('input', {
+    'class': ["has-read", "has-read-edit"], 
+    'type': "checkbox", 
+    'name': "has-read-edit", 
+    'hasRead': hasRead
+  });
+  const removeBtn = createDOMElement('button', {
+    'class': ["btn", "remove-btn"], 
+    'type': 'button', 
+    'textContent': 'Remove'
+  });
+  const editBtn = createDOMElement('button', {
+    'class': ["btn", "edit-btn"], 
+    'type': 'button', 
+    'textContent': 'Edit'
+  });
 
-  div.innerHTML = 
-    `<h4>${title}</h4>
-    <span>${author}</span>
-    <span class="hidden hideable">${genre}</span>
-    <span class="hidden hideable">${pages} pages</span>
-    <label class="cbox-label hidden hideable">
-      Read?
-      <input type="checkbox" name="has-read-edit" class="has-read has-read-edit" ${(hasRead) ? "checked" : ""}>
-    </label>
-    <div class="book-open-btns hidden hideable">
-      <button type="button" class="btn remove-btn">Remove</button>
-    </div>
-  `
+  const elements = [
+    ['h4', {
+      'textContent': title
+    }],
+    ['span', {
+      'textContent': author
+    }],
+    ['span', {
+      'class': ["hidden", "hideable"], 
+      'textContent': genre
+    }],
+    ['span', {
+      'class': ["hidden", "hideable"], 
+      'textContent': `${pages} pages`
+    }],
+    ['label', {
+      'class': ["cbox-label", "hidden", "hideable"], 
+      'textContent': 'Read?'
+    }],
+    ['div', {
+      'class': ["book-open-btns", "hidden", "hideable"]
+    }]
+  ];
+
+  elements.forEach(element => {
+    const newElement = createDOMElement(...element);
+    div.appendChild(newElement);
+  });
+
+  div.querySelector('.cbox-label').appendChild(checkbox);
+  div.querySelector('.book-open-btns').appendChild(editBtn);
+  div.querySelector('.book-open-btns').appendChild(removeBtn);
+
   return div;
+}
+
+function createDOMElement(element, attributes) {
+  const newElement = document.createElement(element);
+
+  for (const property in attributes) {
+    if (property === 'class') {;
+      attributes['class'].forEach(clas => newElement.classList.add(clas)) 
+    } else if (property === 'textContent') {
+      newElement.textContent = attributes['textContent'];
+    } else if (property === 'hasRead') {
+      newElement.checked = attributes['hasRead'];
+    } else {
+      newElement.setAttribute(property, attributes[property]);
+    }
+  }
+
+  return newElement;
 }
 
 // Handle Add Book form click

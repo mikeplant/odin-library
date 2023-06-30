@@ -1,0 +1,5 @@
+updateBookDisplay refactor
+Edit book cancel button - connect to js
+
+Edit form pages input should be type of number
+Add edit book form validation
