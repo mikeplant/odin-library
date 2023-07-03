@@ -1,5 +1,3 @@
-updateBookDisplay refactor
-Edit book cancel button - connect to js
+Edit Book Form show required message if validation fails
 
-Edit form pages input should be type of number
-Add edit book form validation
+Sort menu layout on smaller viewport

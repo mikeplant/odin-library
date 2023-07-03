@@ -27,13 +27,13 @@ bookDisplay.addEventListener('click', (e) => {
       (clickedElement.classList.contains('remove-btn')) ? 'remove-btn' :
       (clickedElement.classList.contains('edit-btn')) ? 'edit-btn' :
       (clickedElement.classList.contains('confirm-edit-btn')) ? 'confirm-edit-btn' :
+      (clickedElement.classList.contains('cancel-edit-btn')) ? 'cancel-edit-btn' :
       (clickedElement.classList.contains('has-read-edit')) ? 'has-read-edit' :
       (clickedElement.classList.contains('cbox-label')) ? 'cbox-label' :
       (clickedElement.classList.contains('book-end')) ? 'book-end' :
       (clickedElement.classList.contains('book-open')) ? 'book-open' :
       '';
   };
-
 
   if (selected() === 'book-display') return;
   if (clickedElement.type === 'button' || clickedElement.type === 'checkbox' || clickedElement.type === 'text') {
@@ -52,17 +52,31 @@ function handleInputClick(clickedElement, selected) {
     parent.remove();
   } else if (selected === 'confirm-edit-btn') {
     selectedId = parseInt(parent.parentNode.dataset.id);
+    const requiredInputs = getRequiredElements(selectedId);
+    if (!isValidForm(requiredInputs)) return;
     updateBookDetails(selectedId);
     updateBookDisplay(selectedId, parent.parentNode);
   } else if (selected === 'edit-btn') {
     parent.classList.add('editing');
     parent.innerHTML = '';
     showBookEditForm(selectedId, parent);
+  } else if (selected === 'cancel-edit-btn') {
+    selectedId = parseInt(parent.parentNode.dataset.id);
+    parent.classList.remove('editing');
+    parent.innerHTML = '';
+    updateBookDisplay(selectedId, parent.parentNode);
   } else if (selected === 'remove-btn') {
     showRemoveConfirmBtn(clickedElement);
   } else if (selected === 'has-read-edit') {
     changeReadStatus(selectedId);
   }
+}
+
+function getRequiredElements(id) {
+  const title = document.querySelector(`#title-edit-${id}`);
+  const author = document.querySelector(`#author-edit-${id}`);
+  const pages = document.querySelector(`#pages-edit-${id}`);
+  return [title, author, pages];
 }
 
 function updateBookDisplay(id, parent) {
@@ -137,11 +151,13 @@ function createEditForm(book) {
         'textContent': `${key.charAt(0).toUpperCase() + key.slice(1)}`
       });
       const input = createDOMElement('input', {
-        'type': 'text',
+        'type': `${(key === 'pages') ? 'number' : 'text'}`,
         'name': `${key}-edit-${book.id}`,
         'id': `${key}-edit-${book.id}`,
         'value': `${book[key]}`
       });
+      if (key === 'pages') input.setAttribute('min', 1);
+      if (key !== 'genre') input.setAttribute('required', '');
       form.append(label, input);
     }
   }
