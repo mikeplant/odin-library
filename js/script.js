@@ -8,13 +8,15 @@ const addBookForm = document.querySelector('.add-book-form');
 const hasReadEdit = document.querySelector('#has-read-edit');
 
 
-function Book(title, author, genre, pages, hasRead, id) {
-  this.title = title
-  this.author = author
-  this.genre = genre
-  this.pages = pages
-  this.hasRead = hasRead
-  this.id = id
+class Book {
+  constructor(title, author, genre, pages, hasRead, id) {
+    this.title = title;
+    this.author = author;
+    this.genre = genre;
+    this.pages = pages;
+    this.hasRead = hasRead;
+    this.id = id;
+  }
 }
 
 // Handle book card click
